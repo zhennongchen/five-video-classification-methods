@@ -11,6 +11,9 @@ import operator
 import threading
 from processor import process_image
 from keras.utils import to_categorical
+import settings
+import function_list as ff
+cg = settings.Experiment() 
 
 class threadsafe_iterator:
     def __init__(self, iterator):
@@ -40,7 +43,7 @@ class DataSet():
         """
         self.seq_length = seq_length
         self.class_limit = class_limit
-        self.sequence_path = os.path.join('data', 'sequences')
+        self.sequence_path = os.path.join(cg.oct_main_dir,'UCF101', 'sequences')
         self.max_frames = 300  # max number of frames a video can have for us to use it
 
         # Get the data.
@@ -57,7 +60,7 @@ class DataSet():
     @staticmethod
     def get_data():
         """Load our data from file."""
-        with open(os.path.join('data', 'data_file.csv'), 'r') as fin:
+        with open(os.path.join(cg.oct_main_dir,'UCF101', 'data_file.csv'), 'r') as fin:
             reader = csv.reader(fin)
             data = list(reader)
 
@@ -237,8 +240,10 @@ class DataSet():
     def get_frames_for_sample(sample):
         """Given a sample row from the data file, get all the corresponding frame
         filenames."""
-        path = os.path.join('data', sample[0], sample[1])
+        path = os.path.join(cg.oct_main_dir,'UCF101', sample[0]+'_image', sample[1])
+        print('path in sample is:',path)
         filename = sample[2]
+        print('path in filenmae is:', filename)
         images = sorted(glob.glob(os.path.join(path, filename + '*jpg')))
         return images
 
