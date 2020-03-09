@@ -11,6 +11,10 @@ extract all 101 classes. For instance, set class_limit = 8 to just
 extract features for the first 8 (alphabetical) classes in the dataset.
 Then set the same number when training models.
 """
+
+'''
+for each time frame, (2048,0) is the dimension of features extracted.
+'''
 import numpy as np
 import os
 from data import DataSet
@@ -40,7 +44,7 @@ for video in data.data:
     # Get the path to the sequence for this video.
     path = os.path.join(cg.oct_main_dir,'UCF101', 'sequences', video[2] + '-' + str(seq_length) + \
         '-features')  # numpy will auto-append .npy
-    
+ 
 
     # Check if we already have it.
     if os.path.isfile(path + '.npy'):
@@ -63,6 +67,7 @@ for video in data.data:
     np.save(path, sequence)
 
     pbar.update(1)
+    
     
 
 pbar.close()

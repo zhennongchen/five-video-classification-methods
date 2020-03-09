@@ -241,10 +241,11 @@ class DataSet():
         """Given a sample row from the data file, get all the corresponding frame
         filenames."""
         path = os.path.join(cg.oct_main_dir,'UCF101', sample[0]+'_image', sample[1])
-        print('path in sample is:',path)
+        #print('path in sample is:',path)
         filename = sample[2]
-        print('path in filenmae is:', filename)
+        #print('path in filenmae is:', filename)
         images = sorted(glob.glob(os.path.join(path, filename + '*jpg')))
+        
         return images
 
     @staticmethod
