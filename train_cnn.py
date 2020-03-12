@@ -15,7 +15,7 @@ from keras.optimizers import SGD    # Stochastic gradient descent: use 1 example
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D
-from keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping
+from keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping,CSVLogger
 from data import DataSet
 import os.path
 import settings
@@ -25,17 +25,20 @@ cg = settings.Experiment()
 data = DataSet()
 main_folder = os.path.join(cg.oct_main_dir,'UCF101')
 
-os.makedirs(os.path.join(main_folder,'checkpoints','approach1'),exist_ok=True)
+os.makedirs(os.path.join(main_folder,'checkpoints','inception'),exist_ok=True)
 model_name = 'inception'
 # Helper: Save the model.
 checkpointer = ModelCheckpoint(
-    filepath=os.path.join(main_folder, 'checkpoints', 'approach1',model_name+'.hdf5'),
+    filepath=os.path.join(main_folder, 'checkpoints', model_name,model_name+'.hdf5'),
     monitor='val_loss',
     verbose=1,
     save_best_only=True)
 
+# Helper: save the log
+csv_logger = CSVLogger(os.path.join(main_folder, 'logs', model_name + '-' + 'training-log' + '.csv'))
+
 # Helper: Stop when we stop learning.
-early_stopper = EarlyStopping(patience=10)
+#early_stopper = EarlyStopping(patience=10)
 
 # Helper: TensorBoard
 #tensorboard = TensorBoard(log_dir=os.path.join('data', 'logs'))
@@ -144,22 +147,21 @@ def main(weights_file):
 
     # Get and train the mid layers.
     model = freeze_all_but_mid_and_top(model)
-    model,hist = train_model(model, 300,generators,[checkpointer, early_stopper])
+    model,hist = train_model(model,200,generators,[checkpointer,csv_logger])
     
-    # save history of training
-    train_acc_list = np.asarray(hist.history['acc'])
-    train_top_acc_list = np.asarray(hist.history['top_k_categorical_accuracy'])
-    val_acc_list = np.asarray(hist.history['val_acc'])
-    val_top_acc_list = np.asarray(hist.history['val_top_k_categorical_accuracy'])
-    val_loss_list = np.asarray(hist.history['val_loss'])
+    # # save history of training
+    # train_acc_list = np.asarray(hist.history['acc'])
+    # train_top_acc_list = np.asarray(hist.history['top_k_categorical_accuracy'])
+    # val_acc_list = np.asarray(hist.history['val_acc'])
+    # val_top_acc_list = np.asarray(hist.history['val_top_k_categorical_accuracy'])
+    # val_loss_list = np.asarray(hist.history['val_loss'])
 
-    np.save(os.path.join(main_folder,'checkpoints','approach1',model_name+'_train_acc'),train_acc_list)
-    np.save(os.path.join(main_folder,'checkpoints','approach1',model_name+'_train_top_5_acc'),train_top_acc_list)
-    np.save(os.path.join(main_folder,'checkpoints','approach1',model_name+'_val_acc'),val_acc_list)
-    np.save(os.path.join(main_folder,'checkpoints','approach1',model_name+'_val_top_5_acc'),val_top_acc_list)
-    np.save(os.path.join(main_folder,'checkpoints','approach1',model_name+'_val_loss'),val_loss_list)
-
-    
+    # np.save(os.path.join(main_folder,'checkpoints','inception',model_name+'_train_acc'),train_acc_list)
+    # np.save(os.path.join(main_folder,'checkpoints','inception',model_name+'_train_top_5_acc'),train_top_acc_list)
+    # np.save(os.path.join(main_folder,'checkpoints','inception',model_name+'_val_acc'),val_acc_list)
+    # np.save(os.path.join(main_folder,'checkpoints','inception',model_name+'_val_top_5_acc'),val_top_acc_list)
+    # np.save(os.path.join(main_folder,'checkpoints','inception',model_name+'_val_loss'),val_loss_list)
+  
 
 if __name__ == '__main__':
     weights_file = None

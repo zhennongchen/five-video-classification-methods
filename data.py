@@ -152,6 +152,9 @@ class DataSet():
         return np.array(X), np.array(y)
 
     @threadsafe_generator
+    # Generator is not a collection, it stops with yield and returns to where it was left in the next call. 
+    # Thus, it does not requires the use of a lot of memory. 
+    # def + yield = generator; generator = def_name(); then use next(generator) to call generator'''
     def frame_generator(self, batch_size, train_test, data_type):
         """Return a generator that we can use to train on. There are
         a couple different things we can return:
@@ -164,17 +167,17 @@ class DataSet():
 
         print("Creating %s generator with %d samples." % (train_test, len(data)))
 
-        while 1:
+        while 1: # it means next time, we can still start from this while loop which is always correct
             X, y = [], []
 
             # Generate batch_size samples.
-            for _ in range(batch_size):
+            for _ in range(batch_size): 
                 # Reset to be safe.
                 sequence = None
-
+                
                 # Get a random sample.
                 sample = random.choice(data)
-
+            
                 # Check to see if we've already saved this sequence.
                 if data_type is "images":
                     # Get and resample frames.

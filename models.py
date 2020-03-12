@@ -78,9 +78,10 @@ class ResearchModels():
         our CNN to this model predomenently."""
         # Model.
         model = Sequential()
-        model.add(LSTM(2048, return_sequences=False,
-                       input_shape=self.input_shape,
-                       dropout=0.5))
+        model.add(LSTM(2048, activation='tanh',recurrent_activation='sigmoid',
+                    return_sequences=False, # 2048 = the units, which is the diemnsionality of the output space. It should be equal to input dimension since each input gets one corresponding ouput
+                    input_shape=self.input_shape,
+                    dropout=0.5))
         model.add(Dense(512, activation='relu'))
         model.add(Dropout(0.5))
         model.add(Dense(self.nb_classes, activation='softmax'))
